@@ -1,0 +1,4 @@
+.build/
+HTML-AsText-Fix-*/
+*.bak
+*.gz
