@@ -5,6 +5,7 @@ use warnings 'all';
 
 use Cwd;
 use HTML::AsText::Fix;
+use Regexp::Common qw(comment);
 
 use Moose;
 with 'Dist::Zilla::Role::AfterBuild';
@@ -22,6 +23,8 @@ sub after_build {
     $pod->index(1);
     $pod->output_string(\$html);
     $pod->parse_file(getcwd . '/README.pod');
+
+    $html =~ s/$RE{comment}{HTML}\s*//gos;
 
     open(my $fh, '>:encoding(latin1)', HTML);
     print $fh $html;
