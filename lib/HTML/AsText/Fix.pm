@@ -13,11 +13,11 @@ my ($html);
 
 =head1 SYNOPSIS
 
-# fix individual objects
+    # fix individual objects
     my $tree = HTML::TreeBuilder::XPath->new_from_content($html);
     my $guard = HTML::AsText::Fix::object($tree);
 
-# fix deeply nested objects
+    # fix deeply nested objects
     use URI;
     use Web::Scraper;
 
