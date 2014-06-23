@@ -2,6 +2,7 @@ package HTML::AsText::Fix;
 # ABSTRACT: extends HTML::Element::as_text() to render text properly
 
 use strict;
+use warnings;
 
 use HTML::Tree;
 use Monkey::Patch qw(:all);
@@ -167,9 +168,9 @@ sub as_text {
 
     if ( $options{'trim'} ) {
         my $extra_chars = $options{'extra_chars'} || '';
-        $text =~ s/[\n\r\f\t\x{a0}$extra_chars ]+$//s;
-        $text =~ s/^[\n\r\f\t\x{a0}$extra_chars ]+//s;
-        $text =~ s/[\x{a0}$extra_chars ]/ /g;
+        $text =~ s/[\n\r\f\t\x{a0}${extra_chars}\x{20}]+$//sx;
+        $text =~ s/^[\n\r\f\t\x{a0}${extra_chars}\x{20}]+//sx;
+        $text =~ s/[\x{a0}${extra_chars}\x{20}]/ /gx;
     }
 
     return $text;
@@ -197,7 +198,7 @@ For example, to completely get rid of separation between inline nodes:
 
 sub global {
     my ( %options ) = @_;
-    patch_package 'HTML::Element', as_text => sub {
+    return patch_package 'HTML::Element', as_text => sub {
         shift; # $original
         as_text( @_, %options );
     };
@@ -214,7 +215,7 @@ Accepts the same options as L</global>:
 
 sub object {
     my ( $obj, %options ) = @_;
-    patch_object $obj, as_text => sub {
+    return patch_object $obj, as_text => sub {
         shift; # $original
         my $self = shift;
         as_text( $self, @_, %options );
